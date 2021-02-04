@@ -18,7 +18,7 @@ const apiUsersRouter = require('./routes/apiUsers');
 const apiUniversitiesRouter = require('./routes/apiUniversities');
 const apiMediaRouter = require('./routes/apiMedia');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const app = express();
 const hbs = exphbs.create({
 	defaultLayout: 'main',

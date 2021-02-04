@@ -1,4 +1,5 @@
 1. Check & delete jsonStorage
 2. Update about and index pages
+3. Return .env DATABASE_URL variable
 
 //////
