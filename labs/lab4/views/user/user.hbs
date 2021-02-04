@@ -1,0 +1,27 @@
+<div class="wrapper">
+	<div class="user">
+		<div class="user__title title"><img id="main-logo" src="/img/icons/logo.png" alt="logo" /> Многостраничный веб сайт</div>
+		<div class="user__row row">
+			<div class="user__menu menu">
+				{{>menu}}
+			</div>
+			<div class="user__content content">
+				<div class="flex-wrapper">
+					<div class="content__ava">
+						<img src="{{user.avaUrl}}" alt="image not found" />
+					</div>
+					<div class="content__desc">
+						<p><b>{{user.fullname}}</b></p>
+						<br>
+						<p>({{user.login}}) {{user.registeredAt}}</p>
+					</div>
+					<div class="content__bio">
+						<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos non alias dolores, mollitia sunt officia magnam, quaerat nulla, numquam sit illum et molestiae consectetur voluptate possimus vero recusandae accusamus quisquam.</p>
+						<br>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A consequatur eaque vel fugiat aperiam, aut maxime ullam nesciunt quaerat ea velit ipsam ratione, delectus quibusdam odit possimus placeat rem quisquam.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

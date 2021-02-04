@@ -1,0 +1,4 @@
+1. Check & delete jsonStorage
+2. Update about and index pages
+
+//////

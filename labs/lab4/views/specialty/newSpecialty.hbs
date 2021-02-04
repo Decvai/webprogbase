@@ -1,0 +1,17 @@
+<div class="wrapper">
+	<div class="new-specialty">
+		<div class="new-specialty__title title"><img id="main-logo" src="/img/icons/logo.png" alt="logo" /> Многостраничный веб сайт</div>
+		<div class="new-specialty__row row">
+			<div class="new-specialty__menu menu">
+				{{>menu}}
+			</div>
+			<div class="new-entity__content new-specialty__content content">
+				<form method="post" enctype="multipart/form-data">
+					<input type="text" name="name" required placeholder="Название">
+					<input type="number" name="numOfStudents" placeholder="Количество студентов на специальности">
+					<input class="submit" type="submit" value="Создать">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
