@@ -1,4 +1,4 @@
-const mongodbURL = require('./config');
+const mongodbURI = require('./config');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
@@ -62,7 +62,7 @@ app.use('/api/media', apiMediaRouter);
 
 async function start() {
 	try {
-		await mongoose.connect(mongodbURL, {
+		await mongoose.connect(mongodbURI, {
 			useNewUrlParser: true,
 			useFindAndModify: false,
 			useUnifiedTopology: true,
