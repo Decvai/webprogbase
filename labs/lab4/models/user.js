@@ -24,11 +24,6 @@ const schema = new Schema({
 		type: Boolean,
 		default: true,
 	},
-	// universities: {
-	// 	//? It can doesn't work
-	// 	type: String,
-	// 	required: true,
-	// },
 	universities: {
 		type: [String],
 		validate: v => Array.isArray(v) && v.length > 0,

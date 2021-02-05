@@ -7,8 +7,13 @@ const http = require('http');
 const University = require('../models/university');
 const Specialty = require('../models/specialty');
 
-const MediaRepository = require('../repositories/mediaRepository');
-const mediaRepository = new MediaRepository('data/media.json');
+const config = require('../config');
+const cloudinary = require('cloudinary');
+cloudinary.config({
+	cloud_name: config.cloudinary.cloud_name,
+	api_key: config.cloudinary.api_key,
+	api_secret: config.cloudinary.api_secret,
+});
 
 router.get('/', (req, res) => {
 	const name = req.query.name;
@@ -23,7 +28,6 @@ router.get('/', (req, res) => {
 
 		universities.page = [...Array(universities.numOfPages + 1).keys()].slice(1);
 
-		// console.log(universities);
 		res.render('university/universities', {
 			title: 'Universities',
 			isUniversities: true,
@@ -43,36 +47,38 @@ router.get('/new', async (_, res) => {
 	});
 });
 
-router.post('/new', async (req, res) => {
+router.post('/new', (req, res) => {
 	const university = new University({
 		name: req.body.name,
 		country: req.body.country,
 		...(req.body.numOfStudents && { numOfStudents: req.body.numOfStudents }),
 		...(req.body.campus && { campus: req.body.campus }),
 		...(req.body.foundationDate && { foundationDate: req.body.foundationDate }),
-		...(req.files && { image: `/api/media/${req.files.image.md5}` }),
 		specialty: req.body.specialty,
 	});
 
-	await university.save();
+	const imgPromise = new Promise((resolve, reject) => {
+		const fileObject = req.files?.image;
+		const fileBuffer = fileObject?.data;
+		cloudinary.v2.uploader
+			.upload_stream({ resource_type: 'raw' }, (error, result) => {
+				university.image = result?.url;
+				if (error) reject(error);
+				resolve(result.url);
+			})
+			.end(fileBuffer);
+	});
 
-	// if (req.files) {
-	// 	const image = {};
-	// 	image._id = req.files.image.md5;
-	// 	image.path = `./uploads/${req.files.image.name}`;
-
-	// 	const images = mediaRepository.getMedia();
-	// 	const isImage = images.find(img => img._id === image._id);
-
-	// 	if (!isImage) {
-	// 		req.files.image.mv('./uploads/' + req.files.image.name);
-	// 		images.push(image);
-	// 		mediaRepository.addMedia(images);
-	// 	}
-	// }
-
-	// console.log(university);
-	res.status(201).redirect(`/universities/${university._id}`);
+	imgPromise
+		.then(url => {
+			university.image = url;
+			university.save();
+		})
+		.then(() => res.status(201).redirect(`/universities/${university._id}`))
+		.catch(err => {
+			console.log('ERROR', err);
+			res.status(400).redirect('/universities');
+		});
 });
 
 router.get('/:id', (req, res) => {
@@ -84,7 +90,6 @@ router.get('/:id', (req, res) => {
 		});
 		const university = JSON.parse(rawData);
 
-		// console.log(university);
 		res.render('university/university', {
 			title: university.name,
 			university,
@@ -93,31 +98,6 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/:id', async (req, res) => {
-	// const apiReqToUniversity = http.request(
-	// 	{
-	// 		hostname: 'localhost',
-	// 		port: PORT,
-	// 		path: `/api/universities/${req.body.id}`,
-	// 		method: 'DELETE',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 	},
-	// 	apiRes => {
-	// 		console.log(`statusCode: ${apiRes.statusCode}`);
-
-	// 		apiRes.on('data', d => {
-	// 			process.stdout.write(d);
-	// 		});
-	// 	}
-	// );
-	// apiReqToUniversity.on('error', error => {
-	// 	console.error(error);
-	// });
-
-	// apiReqToUniversity.write(req.body.id);
-	// apiReqToUniversity.end();
-
 	await University.deleteOne({ _id: req.body.id });
 
 	res.status(200).redirect('/universities');

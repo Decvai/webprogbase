@@ -1,12 +1,10 @@
-const mongodbURI = require('./config');
+const config = require('./config');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
-
-// const User = require('./models/user'); \
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -16,9 +14,10 @@ const aboutRouter = require('./routes/about');
 
 const apiUsersRouter = require('./routes/apiUsers');
 const apiUniversitiesRouter = require('./routes/apiUniversities');
-const apiMediaRouter = require('./routes/apiMedia');
 
-const PORT = process.env.PORT;
+const PORT = config.port;
+const mongodbUri = config.mongodbUri;
+
 const app = express();
 const hbs = exphbs.create({
 	defaultLayout: 'main',
@@ -52,22 +51,21 @@ app.use('/about', aboutRouter);
 
 app.use('/api/users', apiUsersRouter);
 app.use('/api/universities', apiUniversitiesRouter);
-app.use('/api/media', apiMediaRouter);
-
-// const newUser = new User({
-// 	fullname: 'John',
-// 	login: 'fgergerg',
-// 	universities: ['geroigjeoi23'],
-// });
 
 async function start() {
 	try {
-		await mongoose.connect(mongodbURI, {
+		await mongoose.connect(mongodbUri, {
 			useNewUrlParser: true,
 			useFindAndModify: false,
 			useUnifiedTopology: true,
 		});
 
+		// const User = require('./models/user'); \
+		// const newUser = new User({
+		// 	fullname: 'John',
+		// 	login: 'fgergerg',
+		// 	universities: ['geroigjeoi23'],
+		// });
 		// await newUser.save();
 
 		app.listen(PORT, () => {
