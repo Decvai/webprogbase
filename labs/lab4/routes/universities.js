@@ -63,8 +63,8 @@ router.post('/new', (req, res) => {
 		cloudinary.v2.uploader
 			.upload_stream({ resource_type: 'raw' }, (error, result) => {
 				university.image = result?.url;
-				if (error) reject(error);
-				resolve(result.url);
+				if (error && error.message !== 'Empty file') reject(error);
+				resolve(result?.url);
 			})
 			.end(fileBuffer);
 	});
