@@ -90,9 +90,12 @@ router.get('/:id', (req, res) => {
 		});
 		const university = JSON.parse(rawData);
 
+		const { name: specialtyName = '' } = (await Specialty.findById(university.specialty)) || {};
+
 		res.render('university/university', {
 			title: university.name,
 			university,
+			specialtyName,
 		});
 	});
 });
