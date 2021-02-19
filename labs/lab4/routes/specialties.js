@@ -31,7 +31,7 @@ router.post('/new', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-	const specialty = await Specialty.findById(req.params.id).lean();
+	const specialty = (await Specialty.findById(req.params.id).lean()) || {};
 
 	res.render('specialty/specialty', {
 		title: specialty.name,
