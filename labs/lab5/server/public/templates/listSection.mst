@@ -1,0 +1,9 @@
+<section class="list-section">
+	<div class='container'>
+		<div class="list-section__wrapper">
+			<div id="list" class="list-section__list list">
+				LOADING %_%
+			</div>
+		</div>
+	</div>
+</section>

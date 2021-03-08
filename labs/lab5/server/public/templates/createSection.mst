@@ -1,0 +1,22 @@
+<section class="create-section-section">
+	<div class='container'>
+		<div class="create-section__wrapper">
+			<form class="create-section__form">
+				<input type="text" name="name" required placeholder="Название">
+				<input type="text" name="country" required placeholder="Страна">
+				<input type="number" name="numOfStudents" placeholder="Количество студентов">
+				<input type="number" name="campus" placeholder="Площадь">
+				Дата основания: <input type="date" name="foundationDate">
+				Изображение университета: <input class="form__file" type="file" name="image">
+				<input type="submit" class="submit" value="Создать"></input>
+			</form>
+			<div id="list" class="create-section__list list">
+				LOADING %_%
+			</div>
+			<div id="profile" class="create-section__profile profile"></div>
+
+
+
+		</div>
+	</div>
+</section>

@@ -1,0 +1,17 @@
+@import 'bootstrap/scss/bootstrap';
+
+.container {
+	max-width: 1140px;
+	width: 100%;
+	margin: 0 auto;
+}
+
+.menu {
+	padding: 15px 0 25px;
+}
+
+@media (max-width: 900px) {
+	.container {
+		padding: 0 10px;
+	}
+}

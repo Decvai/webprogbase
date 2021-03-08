@@ -1,0 +1,6 @@
+<h1>Last created ({{items.length}}):</h1>
+<ul>
+	{{#items}}
+	<li>University: {{name}} {{dateAdded}} <button class="list__link" data-id={{_id}}>show more</button></li>
+	{{/items}}
+</ul>
