@@ -1,6 +1,15 @@
-<h1>Last created ({{items.length}}):</h1>
-<ul>
+<h1>{{title}} ({{items.length}}):</h1>
+<table>
+
 	{{#items}}
-	<li>University: {{name}} {{dateAdded}} <button class="list__link" data-id={{_id}}>show more</button></li>
+	<tr>
+		<th>University: {{name}} {{dateAdded}}</th>
+		<th><button class="list__link" data-id={{_id}}>show more</button></th>
+	</tr>
 	{{/items}}
-</ul>
+
+	{{^items}}
+	No universities
+	{{/items}}
+
+</table>

@@ -11,15 +11,9 @@ const schema = new Schema({
 	},
 	numOfStudents: Number,
 	campus: Number,
-	foundationDate: {
-		type: String,
-		default: new Date(Date.now()).toISOString().split('T')[0],
-	},
+	foundationDate: String,
 	image: String,
-	dateAdded: {
-		type: String,
-		default: new Date().toLocaleString('en-US', { timeZone: 'Europe/Kaliningrad' }),
-	},
+	dateAdded: String,
 	// specialty: {
 	// 	type: String,
 	// 	required: true,

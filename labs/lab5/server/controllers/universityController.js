@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const UniversityRepository = require('./../repositories/universityRepository');
 
 const universityRepository = new UniversityRepository('data/universities.json');
@@ -13,6 +15,7 @@ cloudinary.config({
 
 module.exports = {
 	async getUniversities(req, res) {
+		console.log(req.query);
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 5;
 		const name = req.query.name || '';
@@ -59,6 +62,7 @@ module.exports = {
 			...(reqUniversity.numOfStudents && { numOfStudents: reqUniversity.numOfStudents }),
 			...(reqUniversity.campus && { campus: reqUniversity.campus }),
 			...(reqUniversity.foundationDate && { foundationDate: reqUniversity.foundationDate }),
+			dateAdded: moment().format('MMMM Do YYYY, h:mm:ss a'),
 		});
 
 		const imgPromise = new Promise((resolve, reject) => {
@@ -82,23 +86,6 @@ module.exports = {
 				console.log('ERROR', err);
 				res.status(400).json({ message: 'ERROR: ' + err });
 			});
-	},
-
-	async putUniversity(req, res) {
-		const universities = await universityRepository.getUniversities();
-		const requiredId = universities.findIndex(university => university._id === req.params.id);
-		if (requiredId === -1) res.status(404).send('No university found for this ID');
-		else {
-			universities.requiredId.name = req.body.name || universities.requiredId.name;
-			universities.requiredId.country = req.body.country || universities.requiredId.country;
-			universities.requiredId.numOfStudents = req.body.numOfStudents || universities.requiredId.numOfStudents;
-			universities.requiredId.campus = req.body.campus || universities.requiredId.campus;
-			universities.requiredId.foundationDate = req.body.foundationDate || universities.requiredId.foundationDate;
-			universities.requiredId.image = req.body.image || universities.requiredId.image;
-
-			universityRepository.updateUniversity(universities);
-			res.send(universities.requiredId);
-		}
 	},
 
 	async deleteUniversity(req, res) {

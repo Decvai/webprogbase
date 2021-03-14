@@ -1,40 +1,19 @@
 const config = require('./config');
-const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const bodyParser = require('body-parser');
-// const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const corsMiddleware = require('./middleware/cors.middleware');
 
-// const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
-// const universitiesRouter = require('./routes/universities');
-// const specialtiesRouter = require('./routes/specialties');
-// const aboutRouter = require('./routes/about');
+const express = require('express');
+const app = express();
+const WSServer = require('express-ws')(app);
+const aWss = WSServer.getWss();
 
-const apiUsersRouter = require('./routes/apiUsers');
-const apiUniversitiesRouter = require('./routes/apiUniversities');
+const universityRouter = require('./routes/universities');
 
 const PORT = config.port;
 const mongodbUri = config.mongodbUri;
-
-const app = express();
-
-// const hbs = exphbs.create({
-// 	defaultLayout: 'main',
-// 	extname: 'hbs',
-
-// 	helpers: {
-// 		if_eq: function (a, b, opts) {
-// 			if (a === b) return opts.fn(this);
-// 			else return opts.inverse(this);
-// 		},
-// 	},
-// });
-
-// app.engine('hbs', hbs.engine);
-// app.set('view engine', 'hbs');
 
 app.use(corsMiddleware);
 app.use(
@@ -46,14 +25,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-// app.use('/universities', universitiesRouter);
-// app.use('/specialties', specialtiesRouter);
-// app.use('/about', aboutRouter);
+app.use('/api/universities', universityRouter);
 
-app.use('/api/users', apiUsersRouter);
-app.use('/api/universities', apiUniversitiesRouter);
+app.ws('/', (ws, req) => {
+	console.log('Connection established!');
+
+	ws.on('message', msg => {
+		msg = JSON.parse(msg);
+		switch (msg.method) {
+			case 'connection':
+				connectionHandler(ws, msg);
+				break;
+			case 'create':
+				broadcastConnection(ws, msg);
+				break;
+		}
+	});
+});
 
 async function start() {
 	try {
@@ -62,14 +50,6 @@ async function start() {
 			useFindAndModify: false,
 			useUnifiedTopology: true,
 		});
-
-		// const User = require('./models/user'); \
-		// const newUser = new User({
-		// 	fullname: 'John',
-		// 	login: 'fgergerg',
-		// 	universities: ['geroigjeoi23'],
-		// });
-		// await newUser.save();
 
 		app.listen(PORT, () => {
 			console.log(`Server has been started on http://localhost:${PORT}`);
@@ -80,3 +60,18 @@ async function start() {
 }
 
 start();
+
+function connectionHandler(ws, msg) {
+	ws.id = msg.userId;
+	broadcastConnection(ws, msg);
+}
+
+function broadcastConnection(ws, msg) {
+	console.log('Message:', msg);
+
+	aWss.clients.forEach(client => {
+		if (client.id !== msg.userId) {
+			client.send(JSON.stringify(msg));
+		}
+	});
+}

@@ -9,21 +9,32 @@
 </head>
 
 <body>
-	<div class="container">
-		<div class="menu">
-			<button class="menu__btn" data-template='create'>Create entity</button>
-			<button class="menu__btn" data-template='list'>List of entities</button>
+	<div class="menu">
+		<div class="container">
+			<button class="menu__btn active" disabled data-template='create'>Create university</button>
+			<button class="menu__btn" data-template='list'>List of universities</button>
 		</div>
 	</div>
 
-	<div id="root">Откройте одну из секций</div>
+	<div id="root">
+		<!-- <div class="container">
+			<div class="spinner-cnt">
+				<div class="spinner-border" role="status">
+					<span class="sr-only">Loading...</span>
+				</div>
+			</div>
+		</div> -->
+	</div>
 
-	<!-- Modal -->
-	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="toast-wrapper"></div>
+
+	<div id="profile" class="profile"></div>
+
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteEntityModal" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+					<h5 class="modal-title" id="deleteEntityModal">Are you sure?</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -32,12 +43,13 @@
 						...
 					</div> -->
 				<div class="modal-footer">
-					<button type="button" id="deleteConfirm" class="btn btn-primary">Confirm</button>
+					<button type="button" id="deleteConfirm" class="btn btn-danger">Confirm</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
 </body>
 
 </html>
