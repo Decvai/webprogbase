@@ -2,24 +2,25 @@ import './app.scss';
 import Navbar from './navbar/Navbar';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import Registration from './authorization/Registration';
-import Chat from './chat/Chat';
 import Login from './authorization/Login';
-import { useQuery } from '@apollo/client';
-import { LOGIN } from '../query/authorization';
+import { gql, useQuery, useReactiveVar } from '@apollo/client';
 import Loader from '../utils/loader/Loader';
-import { isAuth } from './cache';
+// import { tokenVar } from '../cache';
+import { PROFILE_QUERY } from '../operations/queries/authorization';
+import ChatSection from './chatSection/ChatSection';
+import ChatMenu from './chatSection/chatList/chatMenu/ChatMenu';
 
-function App() {
-	const { loading, error, data } = useQuery(LOGIN, {
-		skip: true,
+function App(props) {
+	const { client, loading, data } = useQuery(PROFILE_QUERY, {
+		fetchPolicy: 'network-only',
 	});
-	// const isAuth = Boolean(false);
 
-	console.log('IS_AUTH:', isAuth());
+	const currentUser = data?.me;
+	console.log(currentUser);
 
-	// if (loading) return <Loader />;
-	// if (error) return <div>An error occurred</div>;
-	// if (!data) return <div>No data!</div>;
+	if (loading) {
+		return <Loader />;
+	}
 
 	return (
 		<BrowserRouter>
@@ -27,19 +28,28 @@ function App() {
 				<Navbar />
 
 				<div className='wrap'>
-					{!false ? (
+					{!currentUser ? (
 						<Switch>
 							<Route
 								path='/registration'
 								component={Registration}
 							/>
 							<Route path='/login' component={Login} />
-							{/* <Redirect to='/login' /> */}
+							<Redirect to='/login' />
 						</Switch>
 					) : (
 						<Switch>
-							<Route path='/' component={Chat} exact />
-							<Redirect to='/' />
+							<Route
+								path='/rooms'
+								component={ChatSection}
+								exact
+							/>
+							<Route
+								path='/rooms/:id'
+								component={ChatMenu}
+								exact
+							></Route>
+							<Redirect to='/rooms' />
 						</Switch>
 					)}
 				</div>
@@ -49,3 +59,9 @@ function App() {
 }
 
 export default App;
+
+export const GET_AUTH = gql`
+	query GetAuth {
+		auth @client
+	}
+`;

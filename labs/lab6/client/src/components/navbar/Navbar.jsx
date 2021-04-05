@@ -1,9 +1,21 @@
 import Logo from './../../assets/icons/logo.png';
 import { NavLink, withRouter } from 'react-router-dom';
 import './navbar.scss';
+import { useQuery } from '@apollo/client';
+import { PROFILE_QUERY } from '../../operations/queries/authorization';
+import LogoutIcon from '../../assets/icons/logout.svg';
 
 function Navbar() {
-	const isAuth = false;
+	const { data } = useQuery(PROFILE_QUERY, {
+		fetchPolicy: 'network-only',
+	});
+
+	const currentUser = data?.me;
+
+	function logOutHandler() {
+		localStorage.removeItem('token');
+		window.location.reload(false);
+	}
 
 	return (
 		<div className='navbar'>
@@ -17,7 +29,7 @@ function Navbar() {
 					<div className='navbar__header'>Chinchuk</div>
 				</div>
 
-				{!isAuth && (
+				{!currentUser && (
 					<>
 						<div className='navbar__login'>
 							<NavLink to='/login'>Sign in</NavLink>
@@ -28,19 +40,17 @@ function Navbar() {
 					</>
 				)}
 
-				{isAuth && (
-					<>
-						<NavLink to='/profile'>
-							<img
-								src='#'
-								alt='avatar'
-								className='navbar__avatar'
-							/>
+				{currentUser && (
+					<div className='navbar__logout'>
+						<NavLink
+							className='navbar__logout-button'
+							to='/login'
+							onClick={() => logOutHandler()}
+						>
+							<img src={LogoutIcon} alt='logout-icon'></img>
+							<div className='navbar__logout-text'>LOGOUT</div>
 						</NavLink>
-						<div className='navbar__logout'>
-							<NavLink to='/login'>Sign out</NavLink>
-						</div>
-					</>
+					</div>
 				)}
 			</div>
 		</div>

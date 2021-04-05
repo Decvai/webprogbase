@@ -15,11 +15,14 @@ export const LOGIN = gql`
 	}
 `;
 
-export const ABOUT_ME = gql`
+export const PROFILE_QUERY = gql`
 	query {
 		me {
 			id
 			username
+			currentRoom {
+				id
+			}
 		}
 	}
 `;

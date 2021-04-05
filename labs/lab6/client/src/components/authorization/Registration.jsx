@@ -2,20 +2,25 @@ import { useState } from 'react';
 import Input from '../../utils/input/Input';
 import { useLazyQuery } from '@apollo/client';
 import './authorization.scss';
-import { REGISTRATION } from '../../query/authorization';
+import { REGISTRATION } from '../../operations/queries/authorization';
+import Loader from '../../utils/loader/Loader';
+import Error from '../../utils/error/Error';
 
 function Registration() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
 
-	const [register, { loading, error }] = useLazyQuery(REGISTRATION, {
+	const [register, { loading }] = useLazyQuery(REGISTRATION, {
 		onCompleted: data => {
 			console.log('data ', data);
 		},
+		onError(err) {
+			setError(err.graphQLErrors[0].message);
+		},
 	});
 
-	if (loading) return <p>Loading ...</p>;
-	if (error) return `Error! ${error.message}`;
+	if (loading) return <Loader />;
 
 	return (
 		<div className='authorization'>
@@ -44,6 +49,8 @@ function Registration() {
 					Continue
 				</button>
 			</form>
+
+			{error && <Error>{error}</Error>}
 		</div>
 	);
 }

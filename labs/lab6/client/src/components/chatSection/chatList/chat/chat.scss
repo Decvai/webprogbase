@@ -1,0 +1,28 @@
+@import '../../../../utils/colors.scss';
+
+.room {
+	padding: 5px;
+
+	border: 1px solid #333;
+	border-radius: 10px;
+	background-color: $font-color;
+	flex: 1 1 40%;
+
+	display: flex;
+	flex-direction: column;
+	&:hover {
+		transform: scale(1.01);
+	}
+	& > * {
+		color: white;
+	}
+
+	&-owner {
+		background-color: rgb(55, 100, 184);
+	}
+
+	&__open {
+		align-self: flex-end;
+		margin: 0px 10px 0px 0px;
+	}
+}
