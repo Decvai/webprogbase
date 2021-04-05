@@ -1,26 +1,29 @@
 import { useState } from 'react';
-import { LOGIN } from '../../query/authorization';
+import { LOGIN } from '../../operations/queries/authorization';
 import { useLazyQuery } from '@apollo/client';
 import Input from '../../utils/input/Input';
 import './authorization.scss';
-import { isAuth } from '../cache';
+import Loader from '../../utils/loader/Loader';
+import Error from '../../utils/error/Error';
+// import { tokenVar } from '../../cache';
 
 function Login(props) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
 
-	const [login, { loading, error }] = useLazyQuery(LOGIN, {
+	const [login, { client, loading }] = useLazyQuery(LOGIN, {
 		onCompleted: data => {
 			localStorage.setItem('token', data.login);
-			isAuth(true);
-
-			console.log(isAuth());
+			client.resetStore();
 			props.history.push('/');
+		},
+		onError(err) {
+			setError(err.graphQLErrors[0].message);
 		},
 	});
 
-	if (loading) return <p>Loading ...</p>;
-	if (error) return <p>Error! {error.message}</p>;
+	if (loading) return <Loader />;
 
 	return (
 		<div className='authorization'>
@@ -49,6 +52,8 @@ function Login(props) {
 					Continue
 				</button>
 			</form>
+
+			{error && <Error>{error}</Error>}
 		</div>
 	);
 }
