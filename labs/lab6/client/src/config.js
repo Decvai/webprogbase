@@ -1,1 +1,1 @@
-export const API_URI = 'https://webprogbase-lab6-graphql.herokuapp.com';
+export const API_URI = 'webprogbase-lab6-graphql.herokuapp.com';

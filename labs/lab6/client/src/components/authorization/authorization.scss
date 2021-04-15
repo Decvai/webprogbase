@@ -1,34 +1,26 @@
-.authorization
-{
-    display: flex;
-    flex-direction: column;
+.authorization {
+	display: flex;
+	flex-direction: column;
+	width: 50%;
+	margin: 0 auto;
+	padding: 30px;
+	border-radius: 10px;
+	background-color: white;
+	form {
+		display: flex;
+		flex-direction: column;
+		> * {
+			margin: 0 0 10px 0;
+		}
+	}
 
-    width: 50%;
-    margin: 0 auto;
-    padding: 30px;
-
-    border-radius: 10px;
-    background-color: white;
-
-    form
-    {
-        display: flex;
-        flex-direction: column;
-        > *
-        {
-            margin: 0 0 10px 0;
-        }
-    }
+	&__btn {
+		align-self: flex-start;
+		padding: 5px 20px;
+	}
 }
 
-.authorization *:not(:first-child)
-{
-    margin: 0 0 10px 0;
-}
-
-.authorization__header
-{
-    padding: 0 0 5px 0;
-
-    text-align: center;
+.authorization__header {
+	padding: 0 0 5px 0;
+	text-align: center;
 }

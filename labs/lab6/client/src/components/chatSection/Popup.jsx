@@ -10,11 +10,13 @@ const Popup = () => {
 	const [createRoom] = useMutation(CREATE_NEW_ROOM);
 
 	function createRoomHandler() {
+		if (!roomName) return;
+
 		createRoom({
 			variables: { name: roomName },
 		});
-		// client.resetStore();
 		popupDisplayVar('none');
+		setRoomName('');
 	}
 
 	return (

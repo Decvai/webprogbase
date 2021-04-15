@@ -1,14 +1,22 @@
+import {
+	ApolloClient,
+	ApolloProvider,
+	createHttpLink,
+	split,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition } from '@apollo/client/utilities';
 import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
-import { ApolloProvider, ApolloClient, createHttpLink } from '@apollo/client';
-import { API_URI } from './config';
+import { BrowserRouter } from 'react-router-dom';
 import { cache } from './cache';
+import App from './components/App';
+import { API_URI } from './config';
 
-import { setContext } from '@apollo/client/link/context';
 const httpLink = createHttpLink({
-	uri: API_URI,
+	uri: 'https://' + API_URI,
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -22,14 +30,40 @@ const authLink = setContext((_, { headers }) => {
 	};
 });
 
+const wsLink = new WebSocketLink({
+	uri: 'ws://' + API_URI + '/graphql',
+	options: {
+		reconnect: true,
+		connectionParams: {
+			Authorization: `Bearer ${localStorage.getItem('token')}`,
+		},
+	},
+});
+
+const concatedLink = authLink.concat(httpLink);
+
+const splitLink = split(
+	({ query }) => {
+		const definition = getMainDefinition(query);
+		return (
+			definition.kind === 'OperationDefinition' &&
+			definition.operation === 'subscription'
+		);
+	},
+	wsLink,
+	concatedLink
+);
+
 const client = new ApolloClient({
-	link: authLink.concat(httpLink),
+	link: splitLink,
 	cache,
 });
 
 ReactDOM.render(
 	<ApolloProvider client={client}>
-		<App />
+		<BrowserRouter>
+			<App />
+		</BrowserRouter>
 	</ApolloProvider>,
 	document.getElementById('root')
 );

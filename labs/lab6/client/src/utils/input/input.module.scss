@@ -1,16 +1,13 @@
 @import '../colors';
 
-.input
-{
-    display: block;
+.input {
+	display: block;
+	border: none;
+	border-bottom: $font-color solid 3px;
+	outline: none;
+	background-color: transparent;
 
-    border: none;
-    border-bottom: $font-color solid 3px;
-    outline: none;
-    background-color: transparent;
-
-    &:focus
-    {
-        transform: scale(1.01);
-    }
+	&:focus {
+		transform: scale(1.01);
+	}
 }

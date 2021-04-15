@@ -1,67 +1,56 @@
-import './app.scss';
-import Navbar from './navbar/Navbar';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
-import Registration from './authorization/Registration';
-import Login from './authorization/Login';
-import { gql, useQuery, useReactiveVar } from '@apollo/client';
-import Loader from '../utils/loader/Loader';
-// import { tokenVar } from '../cache';
+import { useQuery } from '@apollo/client';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { PROFILE_QUERY } from '../operations/queries/authorization';
-import ChatSection from './chatSection/ChatSection';
+import Loader from '../utils/loader/Loader';
+import './app.scss';
+import Login from './authorization/Login';
+import Registration from './authorization/Registration';
 import ChatMenu from './chatSection/chatList/chatMenu/ChatMenu';
+import ChatSection from './chatSection/ChatSection';
+import Navbar from './navbar/Navbar';
 
-function App(props) {
-	const { client, loading, data } = useQuery(PROFILE_QUERY, {
+function App() {
+	const { loading, data } = useQuery(PROFILE_QUERY, {
 		fetchPolicy: 'network-only',
 	});
 
 	const currentUser = data?.me;
-	console.log(currentUser);
 
 	if (loading) {
 		return <Loader />;
 	}
 
 	return (
-		<BrowserRouter>
-			<div className='app'>
-				<Navbar />
+		<div className='app'>
+			<Navbar />
 
-				<div className='wrap'>
-					{!currentUser ? (
-						<Switch>
-							<Route
-								path='/registration'
-								component={Registration}
-							/>
-							<Route path='/login' component={Login} />
-							<Redirect to='/login' />
-						</Switch>
-					) : (
-						<Switch>
-							<Route
-								path='/rooms'
-								component={ChatSection}
-								exact
-							/>
-							<Route
-								path='/rooms/:id'
-								component={ChatMenu}
-								exact
-							></Route>
-							<Redirect to='/rooms' />
-						</Switch>
-					)}
-				</div>
+			<div className='wrap'>
+				{!currentUser ? (
+					<Switch>
+						<Route path='/registration' component={Registration} />
+						<Route path='/login' component={Login} />
+						<Redirect to='/login' />
+					</Switch>
+				) : (
+					<Switch>
+						<Route path='/rooms' component={ChatSection} exact />
+						<Route
+							path='/rooms/:id'
+							component={ChatMenu}
+							exact
+						></Route>
+						<Redirect
+							to={
+								currentUser?.currentRoom
+									? `/rooms/${currentUser?.currentRoom.id}`
+									: '/rooms'
+							}
+						/>
+					</Switch>
+				)}
 			</div>
-		</BrowserRouter>
+		</div>
 	);
 }
 
 export default App;
-
-export const GET_AUTH = gql`
-	query GetAuth {
-		auth @client
-	}
-`;
