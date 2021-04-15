@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import Input from '../../utils/input/Input';
 import { useLazyQuery } from '@apollo/client';
-import './authorization.scss';
-import { REGISTRATION } from '../../operations/queries/authorization';
-import Loader from '../../utils/loader/Loader';
+import { useState } from 'react';
+import { LOGIN, REGISTRATION } from '../../operations/queries/authorization';
 import Error from '../../utils/error/Error';
+import Input from '../../utils/input/Input';
+import Loader from '../../utils/loader/Loader';
+import './authorization.scss';
 
 function Registration() {
 	const [username, setUsername] = useState('');
@@ -12,11 +12,23 @@ function Registration() {
 	const [error, setError] = useState('');
 
 	const [register, { loading }] = useLazyQuery(REGISTRATION, {
-		onCompleted: data => {
-			console.log('data ', data);
+		onCompleted: () => {
+			login({
+				variables: { username, password },
+			});
 		},
 		onError(err) {
-			setError(err.graphQLErrors[0].message);
+			setError(err?.graphQLErrors[0]?.message);
+		},
+	});
+
+	const [login] = useLazyQuery(LOGIN, {
+		onCompleted: data => {
+			localStorage.setItem('token', data.login);
+			window.location.reload(false);
+		},
+		onError(err) {
+			setError(err?.graphQLErrors[0]?.message);
 		},
 	});
 

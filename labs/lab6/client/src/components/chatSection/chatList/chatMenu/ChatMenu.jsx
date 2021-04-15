@@ -1,25 +1,61 @@
-import { useMutation, useQuery } from '@apollo/client';
-import React from 'react';
-import { useParams } from 'react-router';
-import { NavLink } from 'react-router-dom';
-import { PROFILE_QUERY } from '../../../../operations/queries/authorization';
-import { GET_ALL_ROOMS } from '../../../../operations/queries/chatQueries';
-import Loader from '../../../../utils/loader/Loader';
-import './chatMenu.scss';
-import SendMessageIcon from './../../../../assets/icons/send.png';
-import ChatMembersIcon from './../../../../assets/icons/chat-members.png';
-import LeaveIcon from './../../../../assets/icons/leave.png';
+import { useMutation, useQuery, useSubscription } from '@apollo/client';
+import React, { useEffect, useState } from 'react';
+import { Redirect, useParams } from 'react-router';
 import {
 	CREATE_MESSAGE,
 	DELETE_ROOM,
 	LEAVE_CURRENT_ROOM,
 	UPDATE_ROOM,
 } from '../../../../operations/mutations/chatMutations';
+import { PROFILE_QUERY } from '../../../../operations/queries/authorization';
+import { GET_ALL_ROOMS } from '../../../../operations/queries/chatQueries';
+import {
+	CURRENT_ROOM_CHANGED,
+	MEMBER_JOINED,
+	MEMBER_LEFT,
+	MESSAGES_SUBSCRIPTION,
+	ROOM_UPDATED,
+} from '../../../../operations/subscriptions/chatSubscriptions';
+import Loader from '../../../../utils/loader/Loader';
+import { gotoBottom } from '../../../../utils/utils';
+import ChatMembersIcon from './../../../../assets/icons/chat-members.png';
+import LeaveIcon from './../../../../assets/icons/leave.png';
+import SendMessageIcon from './../../../../assets/icons/send.png';
+import UpdateIcon from './../../../../assets/icons/update.png';
+import './chatMenu.scss';
 
-function ChatMenu(props) {
-	const { id } = useParams();
-	const { data: roomsData, loading: getRoomsLoading } = useQuery(
-		GET_ALL_ROOMS
+function ChatMenu({ history }) {
+	const { id: roomId } = useParams();
+	const [hasRoomsData, setHasRoomsData] = useState(false);
+	const [messages, setMessages] = useState([]);
+
+	const { data: lastMessage } = useSubscription(MESSAGES_SUBSCRIPTION);
+	useSubscription(ROOM_UPDATED);
+	useSubscription(MEMBER_JOINED, {
+		onSubscriptionData: () => {
+			refetch();
+		},
+	});
+	useSubscription(MEMBER_LEFT, {
+		onSubscriptionData: () => {
+			refetch();
+		},
+	});
+	useSubscription(CURRENT_ROOM_CHANGED, {
+		onSubscriptionData: ({ subscriptionData }) => {
+			const room = subscriptionData.data.currentRoomChanged.currentRoom;
+			if (!room) {
+				history.push('/rooms');
+				alert('room was deleted');
+			}
+		},
+	});
+
+	const { refetch, data: roomsData, loading: getRoomsLoading } = useQuery(
+		GET_ALL_ROOMS,
+		{
+			fetchPolicy: 'network-only',
+		}
 	);
 	const { data: profileData, loading: profileLoading } = useQuery(
 		PROFILE_QUERY,
@@ -27,25 +63,39 @@ function ChatMenu(props) {
 			fetchPolicy: 'network-only',
 		}
 	);
-	const [leaveCurrentRoom] = useMutation(LEAVE_CURRENT_ROOM);
-	const [createMessage, { data: messageData }] = useMutation(CREATE_MESSAGE);
-	const [deleteRoom] = useMutation(DELETE_ROOM);
-	const [updateRoom, { loading: updateLoading }] = useMutation(UPDATE_ROOM, {
+
+	const [leaveCurrentRoom] = useMutation(LEAVE_CURRENT_ROOM, {
 		onCompleted: () => {
-			alert('Updated');
+			history.push('/rooms');
 		},
+		onError: err => {
+			console.log(err);
+			history.push('/rooms');
+		},
+	});
+	const [createMessage] = useMutation(CREATE_MESSAGE);
+	const [deleteRoom] = useMutation(DELETE_ROOM);
+	const [updateRoom] = useMutation(UPDATE_ROOM, {
 		onError: err => {
 			alert(err);
 		},
 	});
 
-	if (getRoomsLoading || profileLoading || updateLoading) return <Loader />;
+	useEffect(() => {
+		if (!lastMessage) return;
+		const lastMsg = lastMessage.messageCreated;
+		setMessages([...messages, lastMsg]);
+	}, [lastMessage]);
 
-	const rooms = roomsData?.rooms;
-	const currentRoom = rooms?.find(r => r.id === id);
-	const currentUser = profileData?.me;
+	useEffect(() => {
+		const chatMenuBody = document.querySelector('.chat-menu__body');
+		if (!chatMenuBody) return;
+		gotoBottom('.chat-menu__body');
+	});
 
-	const isOwner = currentRoom?.owner.id === currentUser?.id;
+	if (getRoomsLoading || profileLoading) {
+		return <Loader />;
+	}
 
 	function membersListToggle() {
 		const membersList = document.querySelector('.chat-menu__members-list');
@@ -103,18 +153,49 @@ function ChatMenu(props) {
 		}, 300);
 	}
 
-	console.log(currentRoom);
+	const rooms = roomsData?.rooms;
+	const currentRoom = rooms?.find(r => r.id === roomId);
+	const currentUser = profileData?.me;
+	const isOwner = currentRoom?.owner.id === currentUser?.id;
+
+	if (!currentRoom) {
+		return (
+			<div className='chat-menu'>
+				<div className='chat-menu__top'>
+					<div
+						className='chat-menu__leave'
+						onClick={() => leaveCurrentRoom()}
+					>
+						<img src={LeaveIcon} alt='Leave' />
+					</div>
+				</div>
+				<div>Error, current room is not defined</div>
+			</div>
+		);
+	}
+
+	if (!currentUser.currentRoom) {
+		return <Redirect to='/rooms' />;
+	}
+
+	if (currentUser.currentRoom.id !== currentRoom.id) {
+		return <Redirect to={`/rooms/${currentUser.currentRoom.id}`} />;
+	}
+
+	if (!hasRoomsData) {
+		setHasRoomsData(true);
+		setMessages(currentRoom.lastMessages);
+	}
 
 	return (
 		<div className='chat-menu'>
 			<div className='chat-menu__top'>
-				<NavLink
-					to='/rooms'
+				<div
 					className='chat-menu__leave'
 					onClick={() => leaveCurrentRoom()}
 				>
 					<img src={LeaveIcon} alt='Leave' />
-				</NavLink>
+				</div>
 
 				<div
 					className='chat-menu__name-wrapper'
@@ -133,14 +214,13 @@ function ChatMenu(props) {
 						className='chat-menu__name-after'
 						onClick={e => onUpdateNameHandler(e)}
 					>
-						Update
+						<img src={UpdateIcon} alt='Update' />
 					</div>
 				</div>
 
 				<div>
 					{isOwner && (
-						<NavLink
-							to='/rooms'
+						<div
 							onClick={() =>
 								deleteRoom({
 									variables: {
@@ -151,14 +231,14 @@ function ChatMenu(props) {
 							className='chat-menu__delete'
 						>
 							Delete
-						</NavLink>
+						</div>
 					)}
 				</div>
 			</div>
 
 			<div className='chat-menu__body'>
 				<div className='chat-menu__messages'>
-					{currentRoom.lastMessages.map(message => (
+					{messages.map(message => (
 						<div
 							key={message.id}
 							className={

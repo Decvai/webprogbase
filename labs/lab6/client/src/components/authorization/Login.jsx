@@ -1,25 +1,23 @@
+import { useLazyQuery } from '@apollo/client';
 import { useState } from 'react';
 import { LOGIN } from '../../operations/queries/authorization';
-import { useLazyQuery } from '@apollo/client';
-import Input from '../../utils/input/Input';
-import './authorization.scss';
-import Loader from '../../utils/loader/Loader';
 import Error from '../../utils/error/Error';
-// import { tokenVar } from '../../cache';
+import Input from '../../utils/input/Input';
+import Loader from '../../utils/loader/Loader';
+import './authorization.scss';
 
-function Login(props) {
+function Login() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 
-	const [login, { client, loading }] = useLazyQuery(LOGIN, {
+	const [login, { loading }] = useLazyQuery(LOGIN, {
 		onCompleted: data => {
 			localStorage.setItem('token', data.login);
-			client.resetStore();
-			props.history.push('/');
+			window.location.reload(false);
 		},
 		onError(err) {
-			setError(err.graphQLErrors[0].message);
+			setError(err?.graphQLErrors[0]?.message);
 		},
 	});
 
@@ -36,6 +34,7 @@ function Login(props) {
 					placeholder='Username'
 				/>
 				<Input
+					className='authorization__password'
 					value={password}
 					setValue={setPassword}
 					type='password'

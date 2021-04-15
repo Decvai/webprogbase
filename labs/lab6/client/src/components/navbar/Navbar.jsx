@@ -1,9 +1,9 @@
-import Logo from './../../assets/icons/logo.png';
-import { NavLink, withRouter } from 'react-router-dom';
-import './navbar.scss';
 import { useQuery } from '@apollo/client';
-import { PROFILE_QUERY } from '../../operations/queries/authorization';
+import { NavLink, withRouter } from 'react-router-dom';
 import LogoutIcon from '../../assets/icons/logout.svg';
+import { PROFILE_QUERY } from '../../operations/queries/authorization';
+import Logo from './../../assets/icons/logo.png';
+import './navbar.scss';
 
 function Navbar() {
 	const { data } = useQuery(PROFILE_QUERY, {
