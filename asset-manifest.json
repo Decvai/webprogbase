@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/webprogbase/static/css/main.f83760f8.chunk.css",
+    "main.js": "/webprogbase/static/js/main.458f066f.chunk.js",
+    "main.js.map": "/webprogbase/static/js/main.458f066f.chunk.js.map",
+    "runtime-main.js": "/webprogbase/static/js/runtime-main.95c68941.js",
+    "runtime-main.js.map": "/webprogbase/static/js/runtime-main.95c68941.js.map",
+    "static/css/2.679831fc.chunk.css": "/webprogbase/static/css/2.679831fc.chunk.css",
+    "static/js/2.9543a2f3.chunk.js": "/webprogbase/static/js/2.9543a2f3.chunk.js",
+    "static/js/2.9543a2f3.chunk.js.map": "/webprogbase/static/js/2.9543a2f3.chunk.js.map",
+    "index.html": "/webprogbase/index.html",
+    "static/css/2.679831fc.chunk.css.map": "/webprogbase/static/css/2.679831fc.chunk.css.map",
+    "static/css/main.f83760f8.chunk.css.map": "/webprogbase/static/css/main.f83760f8.chunk.css.map",
+    "static/js/2.9543a2f3.chunk.js.LICENSE.txt": "/webprogbase/static/js/2.9543a2f3.chunk.js.LICENSE.txt",
+    "static/media/chat-members.9aa44a85.png": "/webprogbase/static/media/chat-members.9aa44a85.png",
+    "static/media/logout.f21aa689.svg": "/webprogbase/static/media/logout.f21aa689.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.95c68941.js",
+    "static/css/2.679831fc.chunk.css",
+    "static/js/2.9543a2f3.chunk.js",
+    "static/css/main.f83760f8.chunk.css",
+    "static/js/main.458f066f.chunk.js"
+  ]
+}
