@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router';
+import { currentUserVar } from '../../../../cache';
 import {
 	CREATE_MESSAGE,
 	DELETE_ROOM,
 	LEAVE_CURRENT_ROOM,
 	UPDATE_ROOM,
 } from '../../../../operations/mutations/chatMutations';
-import { PROFILE_QUERY } from '../../../../operations/queries/authorization';
 import { GET_ALL_ROOMS } from '../../../../operations/queries/chatQueries';
 import {
 	CURRENT_ROOM_CHANGED,
@@ -28,37 +28,37 @@ function ChatMenu({ history }) {
 	const { id: roomId } = useParams();
 	const [hasRoomsData, setHasRoomsData] = useState(false);
 	const [messages, setMessages] = useState([]);
+	const [members, setMembers] = useState([]);
+
+	const currentUser = currentUserVar();
 
 	const { data: lastMessage } = useSubscription(MESSAGES_SUBSCRIPTION);
 	useSubscription(ROOM_UPDATED);
 	useSubscription(MEMBER_JOINED, {
-		onSubscriptionData: () => {
-			refetch();
+		onSubscriptionData: ({ subscriptionData }) => {
+			const newMember = subscriptionData.data.memberJoined;
+			setMembers([...members, newMember]);
 		},
 	});
 	useSubscription(MEMBER_LEFT, {
-		onSubscriptionData: () => {
-			refetch();
+		onSubscriptionData: ({ subscriptionData }) => {
+			const oldMember = subscriptionData.data.memberLeft;
+			setMembers(members.filter(m => m.id !== oldMember.id));
 		},
 	});
 	useSubscription(CURRENT_ROOM_CHANGED, {
 		onSubscriptionData: ({ subscriptionData }) => {
 			const room = subscriptionData.data.currentRoomChanged.currentRoom;
 			if (!room) {
+				currentUserVar({ ...currentUserVar(), currentRoom: null });
 				history.push('/rooms');
 				alert('room was deleted');
 			}
 		},
 	});
 
-	const { refetch, data: roomsData, loading: getRoomsLoading } = useQuery(
+	const { data: roomsData, loading: getRoomsLoading } = useQuery(
 		GET_ALL_ROOMS,
-		{
-			fetchPolicy: 'network-only',
-		}
-	);
-	const { data: profileData, loading: profileLoading } = useQuery(
-		PROFILE_QUERY,
 		{
 			fetchPolicy: 'network-only',
 		}
@@ -66,6 +66,7 @@ function ChatMenu({ history }) {
 
 	const [leaveCurrentRoom] = useMutation(LEAVE_CURRENT_ROOM, {
 		onCompleted: () => {
+			currentUserVar({ ...currentUserVar(), currentRoom: null });
 			history.push('/rooms');
 		},
 		onError: err => {
@@ -93,7 +94,7 @@ function ChatMenu({ history }) {
 		gotoBottom('.chat-menu__body');
 	});
 
-	if (getRoomsLoading || profileLoading) {
+	if (getRoomsLoading) {
 		return <Loader />;
 	}
 
@@ -155,7 +156,6 @@ function ChatMenu({ history }) {
 
 	const rooms = roomsData?.rooms;
 	const currentRoom = rooms?.find(r => r.id === roomId);
-	const currentUser = profileData?.me;
 	const isOwner = currentRoom?.owner.id === currentUser?.id;
 
 	if (!currentRoom) {
@@ -185,6 +185,7 @@ function ChatMenu({ history }) {
 	if (!hasRoomsData) {
 		setHasRoomsData(true);
 		setMessages(currentRoom.lastMessages);
+		setMembers(currentRoom.members);
 	}
 
 	return (
@@ -273,7 +274,7 @@ function ChatMenu({ history }) {
 							onClick={() => membersListToggle()}
 						/>
 						<ul className='chat-menu__members-list'>
-							{currentRoom.members.map(member => (
+							{members.map(member => (
 								<li
 									key={member.id}
 									className='chat-menu__member'

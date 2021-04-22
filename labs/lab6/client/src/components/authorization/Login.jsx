@@ -11,17 +11,20 @@ function Login() {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 
-	const [login, { loading }] = useLazyQuery(LOGIN, {
+	const [loader, setLoader] = useState(false);
+
+	const [login] = useLazyQuery(LOGIN, {
 		onCompleted: data => {
 			localStorage.setItem('token', data.login);
 			window.location.reload(false);
 		},
 		onError(err) {
+			setLoader(false);
 			setError(err?.graphQLErrors[0]?.message);
 		},
 	});
 
-	if (loading) return <Loader />;
+	if (loader) return <Loader />;
 
 	return (
 		<div className='authorization'>
@@ -42,11 +45,12 @@ function Login() {
 				/>
 				<button
 					className='authorization__btn'
-					onClick={() =>
+					onClick={() => {
+						setLoader(true);
 						login({
 							variables: { username, password },
-						})
-					}
+						});
+					}}
 				>
 					Continue
 				</button>

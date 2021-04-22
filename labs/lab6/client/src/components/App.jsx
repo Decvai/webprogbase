@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { currentUserVar } from '../cache';
 import { PROFILE_QUERY } from '../operations/queries/authorization';
 import Loader from '../utils/loader/Loader';
 import './app.scss';
@@ -11,14 +12,17 @@ import Navbar from './navbar/Navbar';
 
 function App() {
 	const { loading, data } = useQuery(PROFILE_QUERY, {
-		fetchPolicy: 'network-only',
+		fetchPolicy: 'cache-first',
 	});
-
-	const currentUser = data?.me;
 
 	if (loading) {
 		return <Loader />;
 	}
+
+	currentUserVar(data?.me);
+
+	const currentUser = currentUserVar();
+	console.log(currentUser);
 
 	return (
 		<div className='app'>
@@ -42,7 +46,7 @@ function App() {
 						<Redirect
 							to={
 								currentUser?.currentRoom
-									? `/rooms/${currentUser?.currentRoom.id}`
+									? `/rooms/${currentUser.currentRoom.id}`
 									: '/rooms'
 							}
 						/>

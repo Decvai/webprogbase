@@ -7,7 +7,7 @@ import './navbar.scss';
 
 function Navbar() {
 	const { data } = useQuery(PROFILE_QUERY, {
-		fetchPolicy: 'network-only',
+		fetchPolicy: 'cache-only',
 	});
 
 	const currentUser = data?.me;

@@ -1,20 +1,10 @@
-import { useQuery } from '@apollo/client';
-import { popupDisplayVar } from '../../cache';
-import { PROFILE_QUERY } from '../../operations/queries/authorization';
+import { currentUserVar, popupDisplayVar } from '../../cache';
 import ChatList from './chatList/ChatList';
 import './chatSection.scss';
 import Popup from './Popup';
 
 function ChatSection({ history }) {
-	const { data } = useQuery(PROFILE_QUERY, {
-		fetchPolicy: 'network-only',
-	});
-
-	// if (loading) {
-	// 	return <Loader />;
-	// }
-
-	const currentUser = data?.me;
+	const currentUser = currentUserVar();
 
 	if (currentUser?.currentRoom) {
 		history.push(`/rooms/${currentUser.currentRoom.id}`);

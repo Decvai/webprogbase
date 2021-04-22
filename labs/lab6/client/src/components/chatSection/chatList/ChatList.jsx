@@ -25,6 +25,7 @@ function ChatList({ history }) {
 	if (loading) return <Loader />;
 
 	const rooms = data?.rooms;
+	console.log('rooms:', rooms);
 
 	function subscribeToNewRooms() {
 		subscribeToMore({

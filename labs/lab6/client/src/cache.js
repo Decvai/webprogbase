@@ -9,9 +9,15 @@ export const cache = new InMemoryCache({
 						return popupDisplayVar();
 					},
 				},
+				currentUser: {
+					read() {
+						return currentUserVar();
+					},
+				},
 			},
 		},
 	},
 });
 
 export const popupDisplayVar = makeVar('none');
+export const currentUserVar = makeVar();

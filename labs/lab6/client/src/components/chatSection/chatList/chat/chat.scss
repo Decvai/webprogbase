@@ -4,19 +4,21 @@
 	display: flex;
 	flex: 0 1 49%;
 	flex-direction: column;
-
 	padding: 5px;
 	cursor: pointer;
 	border: 1px solid #333;
 	border-radius: 10px;
 	background-color: $font-color;
-
 	&:hover {
 		transform: scale(1.01);
 		opacity: 0.95;
 	}
 	& > * {
 		color: white;
+	}
+
+	&__name {
+		margin: 0 0 5px 0;
 	}
 
 	&-owner {

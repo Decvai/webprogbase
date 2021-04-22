@@ -10,7 +10,8 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+// import { BrowserRouter } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { cache } from './cache';
 import App from './components/App';
 import { API_URI } from './config';
@@ -31,7 +32,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const wsLink = new WebSocketLink({
-	uri: 'ws://' + API_URI + '/graphql',
+	uri: 'wss://' + API_URI + '/graphql',
 	options: {
 		reconnect: true,
 		connectionParams: {
@@ -61,9 +62,9 @@ const client = new ApolloClient({
 
 ReactDOM.render(
 	<ApolloProvider client={client}>
-		<BrowserRouter>
+		<Router>
 			<App />
-		</BrowserRouter>
+		</Router>
 	</ApolloProvider>,
 	document.getElementById('root')
 );

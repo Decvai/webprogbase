@@ -11,13 +11,16 @@ function Registration() {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 
-	const [register, { loading }] = useLazyQuery(REGISTRATION, {
+	const [loader, setLoader] = useState(false);
+
+	const [register] = useLazyQuery(REGISTRATION, {
 		onCompleted: () => {
 			login({
 				variables: { username, password },
 			});
 		},
 		onError(err) {
+			setLoader(false);
 			setError(err?.graphQLErrors[0]?.message);
 		},
 	});
@@ -32,7 +35,7 @@ function Registration() {
 		},
 	});
 
-	if (loading) return <Loader />;
+	if (loader) return <Loader />;
 
 	return (
 		<div className='authorization'>
@@ -52,11 +55,12 @@ function Registration() {
 				/>
 				<button
 					className='authorization__btn'
-					onClick={() =>
+					onClick={() => {
+						setLoader(true);
 						register({
 							variables: { username, password },
-						})
-					}
+						});
+					}}
 				>
 					Continue
 				</button>
