@@ -21,17 +21,19 @@ function ask(questionText) {
   });
 }
 
-function inputCommand() {
-  return new Promise(resolve => {
-    readlineInterface.question(`\nEnter your command: `, resolve);
-  });
+function isIsoDate(str) {
+  // example: 2000-10-31T00:00:00.000Z
+
+  if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false;
+  const d = new Date(str);
+  return d.toISOString() === str;
 }
 
 onInput();
 
 async function onInput() {
   while (true) {
-    const text = await inputCommand();
+    const text = await ask('\nEnter your command: ');
     const parts = text.split('/');
 
     const command = parts[0];
@@ -47,8 +49,8 @@ async function onInput() {
           const users = userRepository.getUsers();
           users.forEach(user => {
             console.log(`--------------------
-			UUID: ${user.uuid}
-			name: ${user.login}`);
+            UUID: ${user.uuid}
+            name: ${user.login}`);
           });
           console.log(`--------------------`);
         }
@@ -168,10 +170,4 @@ async function onInput() {
       console.log(`Not supported command: '${command}'`);
     }
   }
-}
-
-function isIsoDate(str) {
-  if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false;
-  const d = new Date(str);
-  return d.toISOString() === str;
 }
