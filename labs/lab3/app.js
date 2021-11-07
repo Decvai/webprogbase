@@ -17,34 +17,34 @@ routes['apiMedia'] = require('./routes/apiMedia');
 const PORT = process.env.PORT || 3000;
 const app = express();
 const hbs = exphbs.create({
-	defaultLayout: 'main',
-	extname: 'hbs',
+  defaultLayout: 'main',
+  extname: 'hbs',
 
-	helpers: {
-		if_eq: function (a, b, opts) {
-			if (a === b) {
-				// return true;
-				return opts.fn(this);
-			} else {
-				return opts.inverse(this);
-			}
-		},
-	},
+  helpers: {
+    if_eq: function (a, b, opts) {
+      if (a === b) {
+        return opts.fn(this);
+      } else {
+        return opts.inverse(this);
+      }
+    },
+  },
 });
 
 const expressSwagger = require('express-swagger-generator')(app);
 const options = {
-	swaggerDefinition: {
-		info: {
-			description: 'JSON HTTP API web server that provides access to resources from the repository',
-			title: 'lab2 - JSON HTTP API Web Server',
-			version: '1.0.0',
-		},
-		host: `localhost:${PORT}`,
-		produces: ['application/json'],
-	},
-	basedir: __dirname,
-	files: ['./routes/**/*.js', './models/**/*.js'],
+  swaggerDefinition: {
+    info: {
+      description:
+        'JSON HTTP API web server that provides access to resources from the repository',
+      title: 'lab2 - JSON HTTP API Web Server',
+      version: '1.0.0',
+    },
+    host: `localhost:${PORT}`,
+    produces: ['application/json'],
+  },
+  basedir: __dirname,
+  files: ['./routes/**/*.js', './models/**/*.js'],
 };
 expressSwagger(options);
 
@@ -52,9 +52,9 @@ app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
 app.use(
-	fileUpload({
-		createParentPath: true,
-	})
+  fileUpload({
+    createParentPath: true,
+  })
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -70,5 +70,5 @@ app.use('/api/universities', routes['apiUniversities']);
 app.use('/api/media', routes['apiMedia']);
 
 app.listen(PORT, () => {
-	console.log(`Server has been started on http://localhost:${PORT}`);
+  console.log(`Server has been started on http://localhost:${PORT}`);
 });

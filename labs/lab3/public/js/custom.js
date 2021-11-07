@@ -1,9 +1,4 @@
-// document.forms.searchUniversities.onsubmit = function () {
-// 	const name = this.name.value;
-// 	console.log(name);
-// 	return false;
-// };
-
+// eslint-disable-next-line no-unused-vars
 function check() {
-	return confirm('Вы уверены?');
+  return confirm('Вы уверены?');
 }
