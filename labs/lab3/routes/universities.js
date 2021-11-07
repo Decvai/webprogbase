@@ -105,10 +105,9 @@ router.get('/:id', (req, res) => {
   http.get(
     `http://localhost:${PORT}/api/universities/${req.params.id}`,
     async apiRes => {
-      if (apiRes.statusCode === 404) {
+      if (apiRes.statusCode >= 400) {
         res.render('university', {
-          title: 'University not found!',
-          notFound: true,
+          title: 'Not found',
         });
         return;
       }

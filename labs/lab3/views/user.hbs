@@ -6,6 +6,7 @@
 				{{>menu}}
 			</div>
 			<div class="user__content content">
+				{{#if user}}
 				<div class="flex-wrapper">
 					<div class="content__ava">
 						<img src="{{user.avaUrl}}" alt="image not found" />
@@ -21,6 +22,9 @@
 						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A consequatur eaque vel fugiat aperiam, aut maxime ullam nesciunt quaerat ea velit ipsam ratione, delectus quibusdam odit possimus placeat rem quisquam.</p>
 					</div>
 				</div>
+				{{else}}
+				<div>User is not found</div>
+				{{/if}}
 			</div>
 		</div>
 	</div>

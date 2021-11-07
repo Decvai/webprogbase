@@ -26,6 +26,13 @@ router.get('/:id', (req, res) => {
   http.get(
     `http://localhost:${PORT}/api/users/${req.params.id}`,
     async apiRes => {
+      if (apiRes.statusCode >= 400) {
+        res.render('user', {
+          title: 'Not found',
+        });
+        return;
+      }
+
       apiRes.setEncoding('utf8');
       let rawData = '';
       await apiRes.on('data', chunk => {
