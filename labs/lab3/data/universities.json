@@ -57,13 +57,6 @@
         "foundationDate": "1898-08-31T00:00:00.000Z"
     },
     {
-        "uuid": "0808a67b-63a3-45ab-8533-fe286ffc7a33",
-        "name": "New university123",
-        "country": "string",
-        "numOfStudents": 0,
-        "campus": 0
-    },
-    {
         "uuid": "1108a67b-63a3-45ab-8533-fe286ffc7a33",
         "name": "New universi444ty",
         "country": "string",
@@ -111,5 +104,22 @@
         "country": "string",
         "numOfStudents": 0,
         "campus": 0
+    },
+    {
+        "uuid": "d89c6153-6704-4f2a-960d-f94cf2c857a1",
+        "name": "wefwefwe",
+        "country": "ewefewtrwer",
+        "numOfStudents": "",
+        "campus": "",
+        "foundationDate": "2021-11-16",
+        "unImage": "/api/media/5287e0066af1f470d513dfbd9aaa7222"
+    },
+    {
+        "uuid": "9cf9fa7c-e0d0-409c-b34b-1a4ec948a42a",
+        "name": "wefwefwef",
+        "country": "wefwefw",
+        "numOfStudents": "",
+        "campus": "",
+        "foundationDate": ""
     }
 ]

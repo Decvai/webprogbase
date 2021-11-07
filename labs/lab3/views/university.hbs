@@ -6,6 +6,9 @@
 				{{>menu}}
 			</div>
 			<div class="university__content content">
+				{{#if notFound}}
+				<div>University not found.</div>
+				{{else}}
 				{{#if university.unImage}}
 				<div class="content__ava">
 					<img src="{{university.unImage}}" alt="image not found" />
@@ -39,6 +42,7 @@
 					<input type="hidden" name="uuid" value="{{university.uuid}}" />
 					<input class="remove-university" type="submit" value="Удалить этот университет">
 				</form>
+				{{/if}}
 			</div>
 		</div>
 	</div>

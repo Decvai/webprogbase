@@ -1,7 +1,6 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
-const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 
 const routes = {};
@@ -19,16 +18,6 @@ const app = express();
 const hbs = exphbs.create({
   defaultLayout: 'main',
   extname: 'hbs',
-
-  helpers: {
-    if_eq: function (a, b, opts) {
-      if (a === b) {
-        return opts.fn(this);
-      } else {
-        return opts.inverse(this);
-      }
-    },
-  },
 });
 
 const expressSwagger = require('express-swagger-generator')(app);
@@ -56,8 +45,8 @@ app.use(
     createParentPath: true,
   })
 );
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes['index']);
